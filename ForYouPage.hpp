@@ -1,3 +1,4 @@
+#pragma once
 #include "DoubleLinkedList.hpp"
 #include "User.hpp"
 
@@ -8,25 +9,19 @@ private:
 
 public:
     
-    ForYouPage(DoubleLinkedList<User> friends) {
-        this->friends = friends;
-    }
+    ForYouPage(const DoubleLinkedList<User>& friendsList) : friends(friendsList) {}
 
- 
     DoubleLinkedList<Post> getPostsToDisplay() const {
         return postsToDisplay;
     }
-
     
     void setPostsToDisplay(const DoubleLinkedList<Post>& posts) {
         postsToDisplay = posts;
     }
-
  
     DoubleLinkedList<User> getFriends() const {
         return friends;
     }
-
 
     void setFriends(const DoubleLinkedList<User>& friendsList) {
         friends = friendsList;

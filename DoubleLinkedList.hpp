@@ -1,28 +1,28 @@
+#pragma once
 #include <iostream>
-
-// Define the struct for the node
+// Node structure for the linked list
 template<typename T>
 struct Node {
     T data;
-    Node<T>* prev;
-    Node<T>* next;
-
-    Node(const T& newData, Node<T>* newPrev = nullptr, Node<T>* newNext = nullptr)
-        : data(newData), prev(newPrev), next(newNext) {}
+    Node* prev;
+    Node* next;
 };
 
-// Define the class for the doubly linked list
+// Generic Double Linked List class
 template<typename T>
-class DoublLinkedList {
+class DoubleLinkedList {
 private:
     Node<T>* head;
     Node<T>* tail;
-    int size;
+    int size; // Track the size of the linked list
 
 public:
-    DoublLinkedList() : head(nullptr), tail(nullptr), size(0) {}
+    // Constructor
+    DoubleLinkedList() : head(nullptr), tail(nullptr), size(0) {}
 
-    ~DoublLinkedList() {
+    // Destructor
+    ~DoubleLinkedList() {
+        // Delete all nodes
         while (head != nullptr) {
             Node<T>* temp = head;
             head = head->next;
@@ -30,91 +30,25 @@ public:
         }
     }
 
-    // Function to insert a new node at a specific index
-    void insertAtIndex(const T& newData, int index) {
-        if (index < 0 || index > size) {
-            std::cerr << "Index out of bounds\n";
-            return;
-        }
+    // Method to add a new node to the end of the list
+    void append(const T& value) {
+        Node<T>* newNode = new Node<T>;
+        newNode->data = value;
+        newNode->next = nullptr;
 
-        Node<T>* newNode = new Node<T>(newData);
-
-        if (index == 0) {
-            newNode->next = head;
-            if (head != nullptr) {
-                head->prev = newNode;
-            }
-            head = newNode;
-            if (tail == nullptr) {
-                tail = newNode;
-            }
-        } else if (index == size) {
+        if (head == nullptr) {
+            head = tail = newNode;
+            newNode->prev = nullptr;
+        } else {
+            tail->next = newNode;
             newNode->prev = tail;
-            if (tail != nullptr) {
-                tail->next = newNode;
-            }
             tail = newNode;
-            if (head == nullptr) {
-                head = newNode;
-            }
-        } else {
-            Node<T>* current = head;
-            for (int i = 0; i < index - 1; ++i) {
-                current = current->next;
-            }
-            newNode->next = current->next;
-            newNode->prev = current;
-            current->next->prev = newNode;
-            current->next = newNode;
         }
 
-        size++;
+        size++; // Increment the size of the linked list
     }
 
-    // Function to delete the node at a specific index
-    void deleteAtIndex(int index) {
-        if (index < 0 || index >= size) {
-            std::cerr << "Index out of bounds\n";
-            return;
-        }
-
-        Node<T>* temp;
-
-        if (index == 0) {
-            temp = head;
-            head = head->next;
-            if (head != nullptr) {
-                head->prev = nullptr;
-            }
-            delete temp;
-            if (head == nullptr) {
-                tail = nullptr;
-            }
-        } else if (index == size - 1) {
-            temp = tail;
-            tail = tail->prev;
-            if (tail != nullptr) {
-                tail->next = nullptr;
-            }
-            delete temp;
-            if (tail == nullptr) {
-                head = nullptr;
-            }
-        } else {
-            Node<T>* current = head;
-            for (int i = 0; i < index; ++i) {
-                current = current->next;
-            }
-            temp = current;
-            current->prev->next = current->next;
-            current->next->prev = current->prev;
-            delete temp;
-        }
-
-        size--;
-    }
-
-    // Function to display the doubly linked list
+    // Method to display the elements of the list
     void display() {
         Node<T>* current = head;
         while (current != nullptr) {
@@ -123,18 +57,58 @@ public:
         }
         std::cout << std::endl;
     }
+
+    // Method to find a specific object by value
+    Node<T>* find(const T& value) {
+        Node<T>* current = head;
+        while (current != nullptr) {
+            if (current->data == value) {
+                return current;
+            }
+            current = current->next;
+        }
+        return nullptr; // Object not found
+    }
+
+    // Method to search for an object by name (assuming T has a getName() method)
+    Node<T>* searchByName(const std::string& name) {
+        Node<T>* current = head;
+        while (current != nullptr) {
+            if (current->data.getName() == name) {
+                return current;
+            }
+            current = current->next;
+        }
+        return nullptr; // Object not found
+    }
+
+    // Method to get the total number of nodes in the linked list
+    int getSize() const {
+        return size;
+    }
+
+    // Method to remove a node from the list
+    void remove(Node<T>* node) {
+        if (node == nullptr) {
+            return;
+        }
+
+        if (node == head) {
+            head = head->next;
+            if (head != nullptr) {
+                head->prev = nullptr;
+            }
+        } else if (node == tail) {
+            tail = tail->prev;
+            if (tail != nullptr) {
+                tail->next = nullptr;
+            }
+        } else {
+            node->prev->next = node->next;
+            node->next->prev = node->prev;
+        }
+
+        delete node;
+        size--; // Decrement the size of the linked list
+    }
 };
-
-int main() {
-    DoublLinkedList<int> myList;
-
-    myList.insertAtIndex(10, 0);
-    myList.insertAtIndex(20, 1);
-    myList.insertAtIndex(30, 2);
-    myList.display(); // Output: 10 20 30
-
-    myList.deleteAtIndex(1);
-    myList.display(); // Output: 10 30
-
-    return 0;
-}

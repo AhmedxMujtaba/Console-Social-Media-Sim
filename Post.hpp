@@ -1,5 +1,6 @@
+#pragma once
 #include <iostream>
-#include <string> 
+#include <string>
 #include <stack>   
 #include "User.hpp"   
 #include "Comment.hpp"   
@@ -12,7 +13,7 @@ private:
     string content;
     string date;
     string time;
-    stack<Users> likes;
+    stack<User> likes;
     stack<Comment> comments;
 
 public:
