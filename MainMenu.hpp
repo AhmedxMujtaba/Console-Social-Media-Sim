@@ -11,10 +11,10 @@ using namespace std;
 class MainMenu {
 public:
     static void mainMenuOptions() {
-        string option = Console::promptWithChoices("Welcome To Social Media Simulator", {"Login", "Sign Up", "Exit"});
+        string option = Console::promptWithChoices("\nWelcome To Social Media Simulator", {"Login", "Sign Up", "Exit","Display"});
 
         if (option == "Login") {
-            User usr = login();
+            User& usr = login();
             if (usr.isValidCheck())
                 {UserMenu::showUserMenu(usr);}
             else
@@ -26,18 +26,20 @@ public:
         } else if (option == "Exit") {
             Console::printSpaced("Thank You for using Social Media Simulator, see you again!");
             exit(0);
+        }else if (option == "Display") {
+            UserData::getInstance().getUserData().display();
         } else {
             Console::printSpaced("Invalid Input");
         }
     }
 
-    static User login() {
+    static User& login() {
         string email = Console::promptSpaced("Enter Your Email");
         string password = Console::promptSpaced("Enter Your Password");
 
         // Use the singleton instance of UserData
         UserData& userDataInstance = UserData::getInstance();
-        User currUser = userDataInstance.getUserData().findUser(email, password);
+        User& currUser = userDataInstance.getUserData().findUser(email, password);
         return currUser;
     }
 

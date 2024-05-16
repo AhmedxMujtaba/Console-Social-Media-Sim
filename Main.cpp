@@ -8,7 +8,6 @@ int main(){
     while (true)
     {
     MainMenu::mainMenuOptions();
-    UserData::getInstance().getUserData().display();
     }
     return 0;
 }
