@@ -9,33 +9,52 @@ using namespace std;
 
 class Post {
 private:
-    string id;
+    const int id; // id is constant
     string content;
+    string title; // Added title parameter
     string date;
     string time;
-    stack<User> likes;
-    stack<Comment> comments;
+    bool isEdited;
+    stack<string> likes;
 
 public:
-   
-    Post(string id, string content, string date, string time) {
-        this->id = id;
-        this->content = content;
-        this->date = date;
-        this->time = time;
+    // Constructor
+    Post(const int id, string content, string title, const string& date, const string& time) 
+        : id(id), content(std::move(content)), title(std::move(title)), date(date), time(time), isEdited(false) {}
+
+    // Getter and setter for isEdited
+    void setIsEdited(bool value) {
+        isEdited = value;
     }
 
+    bool getIsEdited() const {
+        return isEdited;
+    }
 
-    string getId() const {
+    // Getter for likes stack
+    const stack<string>& getLikes() const {
+        return likes;
+    }
+
+    // Method to add a like
+    void addLike(const string& userEmail) {
+        likes.push(userEmail);
+    }
+
+    // Method to remove a like (optional)
+    void removeLike() {
+        if (!likes.empty()) {
+            likes.pop();
+        }
+    }
+
+    // Getter for id
+    int getId() const {
         return id;
     }
 
-    void setId(const string& id) {
-        this->id = id;
-    }
-
- 
-    string getContent() const {
+    // Getter and setter for content
+    const string& getContent() const {
         return content;
     }
 
@@ -43,7 +62,17 @@ public:
         this->content = content;
     }
 
-    string getDate() const {
+    // Getter and setter for title
+    const string& getTitle() const {
+        return title;
+    }
+
+    void setTitle(const string& title) {
+        this->title = title;
+    }
+
+    // Getter and setter for date
+    const string& getDate() const {
         return date;
     }
 
@@ -51,15 +80,12 @@ public:
         this->date = date;
     }
 
-    string getTime() const {
+    // Getter and setter for time
+    const string& getTime() const {
         return time;
     }
 
     void setTime(const string& time) {
         this->time = time;
-    }
-
-    void editPost(const string& content) {
-        this->content = content;
     }
 };

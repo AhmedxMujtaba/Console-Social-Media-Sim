@@ -4,6 +4,8 @@
 #include <chrono>
 #include <sstream>
 #include <iomanip>
+#include "User.hpp"
+#include "MainDataList.hpp"
 using namespace std;
 
 class SystemFunctions {
@@ -42,19 +44,6 @@ public:
         return oss.str();
     }
 
-    static string generateID(string idType){
-        /*
-        id types:
-        Main Stacks: New stack is names after it is created and is named after calculating
-        which number of stack is it E.g MS1, MS2 ...(MN)n
-        Users: Users are named after the MS and then the user no in the stack E.g MS1-U1, MS2-U2 ... (MS)n-(U)n
-        Posts: Post are named after Stack, then user and then the post number of the user.
-        E.g: MS1U1P1, MS2-U1-P2 ... (MS)n-(U)n-(P)n
-        Chats: Named after the two user ids MSn-Un-MSn-Un
-        */
-        
-
-    }
 private:
     static std::tm parseDate(const std::string& date) {
         std::tm timeinfo = {};

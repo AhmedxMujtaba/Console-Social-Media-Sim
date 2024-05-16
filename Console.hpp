@@ -78,14 +78,3 @@ private:
     }
 };
 
-int main() {
-    Console::print("Hello, world!");
-    std::string input = Console::prompt("Enter something:");
-    Console::print("You entered: " + input);
-
-    std::vector<std::string> choices = {"Choice 1", "Choice 2", "Choice 3"};
-    std::string chosen = Console::promptWithChoices("Choose an option:", choices);
-    Console::print("You chose: " + chosen);
-
-    return 0;
-}

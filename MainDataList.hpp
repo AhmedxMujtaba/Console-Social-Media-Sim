@@ -1,22 +1,117 @@
 #pragma once
-#include<iostream>
-#include<DoubleLinkedList.hpp>
-#include<IDStack.hpp>
+#include <iostream>
+#include "User.hpp"
+using namespace std;
 
-//doubleLinkedList Containing Stacks of IDs
-//or make a base class for double linked list using T type and then impliment it using Main Data List.
-//make a double linked list
-//Use the class IDStack as the data member
-//ID stacks will be Array stacks containing IDs starting from a specific number so that if that number is equal
-//to the stack then the id could be search from that particual stack then 
+class MainDataList {
 
-class MainDataStructure{
-    private: 
-    DoublLinkedList<IDStack> mainDataStructure;
+private:
+    struct node {
+        User user;
+        node* nextNode;
+        node* previousNode;
+    }*firstNode;
 
-    public:
-    //initialize data structure if already not initialized
-    //retrieve data 
-    //update data
+public:
+    MainDataList() {
+        firstNode = nullptr;
+    }
 
+    void insertAtEnd(User user) {
+        node* newNode = new node;
+        newNode->user = user;
+        newNode->nextNode = nullptr;
+
+        if (!firstNode) {
+            firstNode = newNode;
+            firstNode->previousNode = nullptr;
+        }
+        else {
+            node* currentNode = firstNode;
+            while (currentNode->nextNode) {
+                currentNode = currentNode->nextNode;
+            }
+            currentNode->nextNode = newNode;
+            newNode->previousNode = currentNode;
+        }
+    }
+
+    void deleteNode(string email, string password) {
+        if (!firstNode) {
+            return; // Empty list
+        }
+
+        node* currentNode = firstNode;
+
+        // Special case: deleting the only node in the list
+        if (compareUser(currentNode->user,email,password) && currentNode->nextNode == nullptr) {
+            delete currentNode;
+            firstNode = nullptr;
+            return;
+        }
+
+        // Delete the first node
+        if (compareUser(currentNode->user,email,password)) {
+            firstNode = currentNode->nextNode;
+            if (firstNode) {
+                firstNode->previousNode = nullptr;
+            }
+            delete currentNode;
+            return;
+        }
+
+        while (currentNode != nullptr) {
+            if (compareUser(currentNode->user,email,password)) {
+                // Delete node from between
+                currentNode->previousNode->nextNode = currentNode->nextNode;
+                if (currentNode->nextNode) {
+                    currentNode->nextNode->previousNode = currentNode->previousNode;
+                }
+                delete currentNode;
+                return;
+            }
+            currentNode = currentNode->nextNode;
+        }
+    }
+
+    bool compareUser(User user1, string email, string password){
+        if (user1.getEmail() == email && user1.getPassword() == password)
+        {
+            return true;
+        }
+        return false;
+    };
+
+   User findUser(string email, string password) {
+    node* currentNode = firstNode;
+    while (currentNode != nullptr) {
+        if (compareUser(currentNode->user, email, password)) {
+            return currentNode->user;
+        }
+        currentNode = currentNode->nextNode;
+    }
+   
+    return User();
+}
+
+    void display() {
+
+        node* iterativeNode;
+        iterativeNode = firstNode;
+        if (firstNode == nullptr)
+        {
+            cout << "List Empty" << endl;
+            return;
+        }
+
+        //Just iterating and printing the values not much to see here
+        cout << "[ ";
+        while (iterativeNode != nullptr)
+        {
+            cout << iterativeNode->user.getName() << " ";
+            iterativeNode = iterativeNode->nextNode;
+        }
+        cout << "]" << endl;
+
+    };
 };

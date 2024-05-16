@@ -1,44 +1,58 @@
 #pragma once
-#include<iostream>
-#include<string>
-#include"DoubleLinkedList.hpp"
-#include"Post.hpp"
-#include"Chat.hpp"
-#include<stack>
-#include"ForYouPage.hpp"
+#include <iostream>
+#include <string>
+#include "Post.hpp"
+#include <stack>
+
 using namespace std;
 
-class User{
-    private:
-    string id;
+class User {
+private:
     string name;
     string password;
     string email;
     int phoneNumber;
     string username;
-    DoubleLinkedList<User> friends;
-    DoubleLinkedList<Post> posts;
-    stack<Chat> chats;
+    bool isValid = false;
+    stack<Post> posts;
+    int totalPosts;
 
-    public:
-    User(string id, string name, string password, string email,
-     int phoneNumber)
-     {
-        this->id = id;
-        this->name = name;
-        this->password = password;
-        this->email = email;
-        this->phoneNumber = phoneNumber;
+public:
+    User() {}
+    User(string name1, string password1, string email1,
+         int phoneNumber1, bool isValid)
+        : name(name1), password(password1), email(email1), phoneNumber(phoneNumber1), isValid(isValid) {
         this->username = generateUserName();
-     };
+        this->totalPosts = 0;
+    }
 
-    
-    
-    string generateUserName(){
-        string username = "niga";
-        //to generate username we need the stack we are storing the
-        //user and use the stack id and user id altogeather
-        //but how? make user name while storing the stack?
-        return username;
+    string generateUserName() {
+        string uName = "niga";
+        // Your logic to generate a username
+        return uName;
+    }
+
+    string getEmail() {
+        return this->email;
+    }
+    string getPassword() {
+        return this->password;
+    }
+    string getName() {
+        return this->name;
+    }
+    bool isValidCheck() {
+        return isValid;
+    }
+    stack<Post> getPosts() {
+        return posts;
+    }
+    int incrementTotalPosts() {
+        this->totalPosts++;
+        return totalPosts;
+    }
+
+    void addPost(const Post& post) {
+        posts.push(post);     
     }
 };
