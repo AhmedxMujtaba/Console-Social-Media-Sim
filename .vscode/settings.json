@@ -109,7 +109,8 @@
     "format": "cpp",
     "span": "cpp",
     "sstream": "cpp",
-    "variant": "cpp"
+    "variant": "cpp",
+    "set": "cpp"
   },
   "cmake.configureOnOpen": true
 }

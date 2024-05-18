@@ -17,6 +17,7 @@ private:
     string username;
     bool isValid = false;
     queue<Post> posts;
+    queue<string> friends;
     int totalPosts;
 
 public:
@@ -41,6 +42,10 @@ public:
     string getName() const {
         return this->name;
     }
+    queue<string> getFriends(){
+        return friends;
+    }
+
     bool isValidCheck() const {
         return isValid;
     }
@@ -54,9 +59,10 @@ public:
         posts.push(post);
     }
     void displayUserInfo() const {
-        cout << "Name: " << name << endl;
+        cout << "\nName: " << name << endl;
         cout << "Email: " << email << endl;
         cout << "Number of Posts: " << totalPosts << endl;
+        cout << "Number of Friends: " << friends.size() << endl;
     }
     void changeName() {
         string newName = Console::prompt("Enter new name: ");
@@ -93,7 +99,7 @@ public:
         return titles;
     }
     void displayAllPostTitles() const {
-        cout << "All Post Titles:" << endl;
+        cout << "Posts:" << endl;
         if (posts.empty()) {
             cout << "No posts available." << endl;
         } else {
@@ -165,7 +171,36 @@ public:
         }
 
         if (!postFound) {
-            cout << "Post with title '" << postTitle << "' not found." << endl;
+            cout << "Post '" << postTitle << "' not found." << endl;
         }
+    }
+
+    void addFriend(string email){
+        friends.push(email);
+    }
+
+    void displayFriends() {
+        queue<string> tempQueue = friends;
+        while (!tempQueue.empty()) {
+            cout << tempQueue.front() << endl;
+            tempQueue.pop();
+        }
+    }
+    
+    void removeFriend(const string& email) {
+        queue<string> tempQueue;
+        bool found = false;
+
+        while (!friends.empty()) {
+            string currentFriend = friends.front();
+            friends.pop();
+
+            if (currentFriend != email) {
+                tempQueue.push(currentFriend);
+            } else {
+                found = true;
+            }
+        }
+        friends = tempQueue;
     }
 };

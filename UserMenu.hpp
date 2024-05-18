@@ -3,17 +3,18 @@
 #include "Console.hpp"
 #include "Post.hpp"
 #include "SystemFunctions.hpp"
+#include "UserData.hpp"
 
 class UserMenu
 {
 
 public:
     UserMenu(){};
-    static void showUserMenu(User& user)
+    static void showUserMenu(User &user)
     {
         while (true)
         {
-            string option = Console::promptWithChoices("\nWelcome " + user.getName(), {"Home Page", "Post", "Add Freinds", "View Posts", "View Freinds", "Profile", "Log Out"});
+            string option = Console::promptWithChoices("\nWelcome " + user.getName(), {"Home Page", "Post", "Add Friends", "View Posts", "View Friends", "Profile", "Log Out"});
 
             if (option == "Home Page")
             {
@@ -26,7 +27,7 @@ public:
                   posts
 
                 */
-               //stacks are over rated, user a function to 
+                viewHomePage(user);
             }
             else if (option == "Post")
             {
@@ -34,12 +35,7 @@ public:
             }
             else if (option == "Add Friends")
             {
-                /*
-                1- enter friend name,
-                2- return array of the most similar looking names
-                3- select the person and add as friend
-                */
-               //fuck
+                selectFriend(user);
             }
             else if (option == "View Posts")
             {
@@ -47,7 +43,7 @@ public:
             }
             else if (option == "View Friends")
             {
-                /* 1- take user and show all their friends */
+                viewAllFriends(user);
             }
             else if (option == "Profile")
             {
@@ -61,7 +57,7 @@ public:
         }
     }
 
-    static void makePost(User &user) // Pass User by reference
+    static void makePost(User &user)
     {
         string title = Console::prompt("Title: ");
         string content = Console::prompt("Content: ");
@@ -108,6 +104,203 @@ public:
         else
         {
             cout << "Invalid option selected." << endl;
+        }
+    }
+    static void selectFriend(User &user)
+    {
+        UserData &userDataInstance = UserData::getInstance();
+        MainDataList &dataList = userDataInstance.getUserData();
+        string friendName = Console::promptSpaced("\nEnter Name to Search: ");
+        vector<User *> matchingUsers = dataList.searchSimilarUsernames(friendName);
+        vector<string> matchingUserNames;
+
+        if (matchingUsers.empty())
+        {
+            Console::printSpaced("No matching users found.");
+            return;
+        }
+
+        matchingUserNames.reserve(matchingUsers.size());
+
+        for (const auto &userPtr : matchingUsers)
+        {
+            // making sure that the user dont find himself here
+            if (userPtr->getName() != user.getName())
+            {
+                matchingUserNames.push_back(userPtr->getName());
+            }
+        }
+
+        string selectedUserName = Console::promptWithChoices("Select: ", matchingUserNames);
+        User *selectedUserPtr = nullptr;
+
+        for (auto &userPtr : matchingUsers)
+        {
+            if (userPtr->getName() == selectedUserName)
+            {
+                selectedUserPtr = userPtr;
+                userPtr->displayUserInfo();
+                break;
+            }
+        }
+
+        if (!selectedUserPtr)
+        {
+            Console::printSpaced("Error: Selected user not found.");
+            return;
+        }
+
+        string option = Console::promptWithChoices("Options: ", {"Add as Friend", "Back"});
+        if (option == "Add as Friend")
+        {
+            // Check if they are already friends
+            queue<string> currentFriends = user.getFriends();
+            bool alreadyFriend = false;
+
+            queue<string> tempQueue = currentFriends;
+            while (!tempQueue.empty())
+            {
+                if (tempQueue.front() == selectedUserPtr->getEmail())
+                {
+                    alreadyFriend = true;
+                    break;
+                }
+                tempQueue.pop();
+            }
+
+            if (alreadyFriend)
+            {
+                Console::printSpaced("User is already your friend.");
+            }
+            else
+            {
+                user.addFriend(selectedUserPtr->getEmail());
+                selectedUserPtr->addFriend(user.getEmail());
+                Console::printSpaced("You and " + selectedUserName + " are now friends.");
+            }
+        }
+        else if (option == "Back")
+        {
+            return;
+        }
+    }
+
+    static void viewAllFriends(User &user)
+    {
+        if (user.getFriends().empty())
+        {
+            Console::printSpaced("No Friends? Try manking some!");
+            return;
+        }
+
+        UserData &userDataInstance = UserData::getInstance();
+        MainDataList &dataList = userDataInstance.getUserData();
+        vector<User *> friends = dataList.findFriends(user);
+        vector<string> friendsNames;
+        // Get the names of all friends
+        for (size_t i = 0; i < friends.size(); i++)
+        {
+            friendsNames.push_back(friends[i]->getName());
+        }
+
+        // Display the names of all friends
+        string selectedUserName = Console::promptWithChoices("Select: ", friendsNames);
+        User *selectedUserPtr = nullptr;
+
+        // Find the selected user from the list of friends
+        for (auto &friendPtr : friends)
+        {
+            if (friendPtr->getName() == selectedUserName)
+            {
+                selectedUserPtr = friendPtr;
+                break;
+            }
+        }
+
+        // Check if the selected user exists
+        if (!selectedUserPtr)
+        {
+            Console::printSpaced("Error: Selected user not found.");
+            return;
+        }
+
+        
+        while (true)
+        {
+            // Display the selected user's information
+            selectedUserPtr->displayUserInfo();
+            vector<string> options = {"Remove as Friend", "View Posts", "Back"};
+            string option = Console::promptWithChoices("Options: ", options);
+
+            if (option == "Remove as Friend")
+            {
+                // remove email of user and friend from thier friend email list and vice versa
+                user.removeFriend(selectedUserPtr->getEmail());
+                selectedUserPtr->removeFriend(user.getEmail());
+                Console::printSpaced("You have removed " + selectedUserName + " as a friend.");
+                break;
+            }
+            else if (option == "View Posts")
+            {
+                // later add option to like post, for that make sure you are passing the post as reference to
+                // ensure the changes are occurring in the pist and not  Fucking copy
+                selectedUserPtr->showSelectedPost();
+            }
+            else if (option == "Back")
+            {
+                break;
+            }
+        }
+    }
+    static void viewHomePage(User &user)
+    {
+        struct PostWithOwner
+        {
+            Post post;
+            std::string ownerName;
+
+            PostWithOwner(const Post &post, const std::string &ownerName)
+                : post(post), ownerName(ownerName) {}
+        };
+
+        UserData &userDataInstance = UserData::getInstance();
+        MainDataList &dataList = userDataInstance.getUserData();
+        vector<User *> friends = dataList.findFriends(user);
+        stack<PostWithOwner> postsStack;
+
+        for (auto &friendPtr : friends)
+        {
+            queue<Post> friendPosts = friendPtr->getPosts();
+            while (!friendPosts.empty() && postsStack.size() < 10)
+            {
+                postsStack.push(PostWithOwner(friendPosts.front(), friendPtr->getName()));
+                friendPosts.pop();
+            }
+            if (postsStack.size() >= 10)
+            {
+                break;
+            }
+        }
+
+        if (postsStack.empty())
+        {
+            Console::printSpaced("No posts to display.");
+        }
+        else
+        {
+            while (!postsStack.empty())
+            {
+                PostWithOwner postWithOwner = postsStack.top();
+                Console::printSpaced("Post by: " + postWithOwner.ownerName);
+                postWithOwner.post.displayPost();
+                postsStack.pop();
+            }
+        }
+
+        string option = Console::promptWithChoices("Options: ", {"Back"});
+        if (option == "Back")
+        {
+            return;
         }
     }
 };

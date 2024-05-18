@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
+#include <algorithm>
 class Console {
 public:
     static void print(const std::string& message) {
@@ -30,32 +30,50 @@ public:
         std::cout << std::endl;
     }
 
-    static std::string promptWithChoices(const std::string& prompt, const std::vector<std::string>& choices) {
-        std::cout << prompt << std::endl;
-        return getValidAnswer(choices);
-    }
+   static std::string promptWithChoices(const std::string& prompt, const std::vector<std::string>& choices) {
+    std::cout << prompt << std::endl;
+    return getValidAnswer(prompt, choices);
+}
 
-    static std::string promptWithChoicesSpaced(const std::string& prompt, const std::vector<std::string>& choices) {
-        std::string choice = promptWithChoices(prompt, choices);
-        std::cout << std::endl;
-        return choice;
-    }
+static std::string promptWithChoicesSpaced(const std::string& prompt, const std::vector<std::string>& choices) {
+    std::string choice = promptWithChoices(prompt, choices);
+    std::cout << std::endl;
+    return choice;
+}
 
 private:
-    static std::string getValidAnswer(const std::vector<std::string>& choices) {
-        std::string chosenAnswer;
-        while (true) {
-            std::cout << formatAnswers(choices) << std::endl;
-            std::string userInput;
-            std::getline(std::cin, userInput);
-            chosenAnswer = parseAnswer(userInput, choices);
-            if (!chosenAnswer.empty()) {
+static std::string getValidAnswer(const std::string& prompt, const std::vector<std::string>& choices) {
+    std::string chosenAnswer;
+    while (true) {
+        std::cout << formatAnswers(choices) << std::endl;
+        std::string userInput;
+        std::getline(std::cin, userInput);
+
+        // Check if user input is a number
+        if (std::all_of(userInput.begin(), userInput.end(), ::isdigit)) {
+            int choiceNum = std::stoi(userInput);
+            if (choiceNum >= 1 && choiceNum <= choices.size()) {
+                chosenAnswer = choices[choiceNum - 1];
                 break;
             }
-            std::cout << "\nIncorrect choice. Please enter the corresponding number or the choice text." << std::endl;
         }
-        return chosenAnswer;
+
+        // Check if user input matches any of the choices
+        for (const auto& answer : choices) {
+            if (userInput == answer) {
+                chosenAnswer = answer;
+                break;
+            }
+        }
+
+        if (!chosenAnswer.empty()) {
+            break;
+        }
+
+        std::cout << "\nIncorrect choice. Please enter the corresponding number or the choice text." << std::endl;
     }
+    return chosenAnswer;
+}
 
     static std::string parseAnswer(const std::string& input, const std::vector<std::string>& choices) {
         for (const auto& answer : choices) {
