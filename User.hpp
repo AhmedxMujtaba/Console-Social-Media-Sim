@@ -14,7 +14,6 @@ private:
     string password;
     string email;
     int phoneNumber;
-    string username;
     bool isValid = false;
     queue<Post> posts;
     queue<string> friends;
@@ -24,13 +23,7 @@ public:
     User() {}
     User(string name1, string password1, string email1, int phoneNumber1, bool isValid)
         : name(name1), password(password1), email(email1), phoneNumber(phoneNumber1), isValid(isValid) {
-        this->username = generateUserName();
         this->totalPosts = 0;
-    }
-
-    string generateUserName() {
-        string uName = "user123"; // Placeholder logic for username generation
-        return uName;
     }
 
     string getEmail() const {

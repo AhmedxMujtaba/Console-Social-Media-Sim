@@ -291,7 +291,7 @@ public:
             while (!postsStack.empty())
             {
                 PostWithOwner postWithOwner = postsStack.top();
-                Console::printSpaced("Post by: " + postWithOwner.ownerName);
+                Console::printSpaced(postWithOwner.ownerName);
                 postWithOwner.post.displayPost();
                 postsStack.pop();
             }

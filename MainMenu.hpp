@@ -58,49 +58,62 @@ public:
     }
 
     static void signUp()
-{
-    string name, password, email;
-    name = Console::promptSpaced("Enter Your Name");
-    email = Console::promptSpaced("Enter Your Email");
-
-    while (!validateEmail(email))
     {
-        email = Console::promptSpaced("Enter Email Again: ");
+        string name, password, email;
+        name = Console::promptSpaced("Enter Your Name");
+        email = Console::promptSpaced("Enter Your Email");
+
+        while (!validateEmail(email))
+        {
+            email = Console::promptSpaced("Enter Email Again: ");
+        }
+
+        password = Console::promptSpaced("Enter Your Password");
+        while (!validatePassword(password))
+        {
+            password = Console::promptSpaced("Enter Password Again: ");
+        }
+        string op = Console::promptWithChoices("Enter Phone Number? ", {"Yes", "No"});
+        int phoneNumber;
+        if (op == "Yes")
+        {
+            phoneNumber = getPhoneNumber();
+        }
+        else if (op == "No")
+        {
+            phoneNumber = 00000000000;
+        }
+        else
+        {
+            phoneNumber = 00000000000;
+            cout << "Invalid Option" << endl;
+        }
+
+        User user(name, password, email, phoneNumber, true);
+
+        // Save user in the database using the singleton instance of UserData
+        UserData &userDataInstance = UserData::getInstance();
+        userDataInstance.getUserData().insertAtEnd(user);
+
+        Console::printSpaced("User signed up successfully. Returning to main menu...");
+        mainMenuOptions();
     }
-    
-    password = Console::promptSpaced("Enter Your Password");
-    while (!validatePassword(password))
-    {
-        password = Console::promptSpaced("Enter Password Again: ");
-    }
-
-    int phoneNumber = getPhoneNumber();
-    User user(name, password, email, phoneNumber, true);
-
-    // Save user in the database using the singleton instance of UserData
-    UserData &userDataInstance = UserData::getInstance();
-    userDataInstance.getUserData().insertAtEnd(user);
-
-    Console::printSpaced("User signed up successfully. Returning to main menu...");
-    mainMenuOptions();
-}
-
 
     static bool validateEmail(const string &email)
-{
-    if (emailAlreadyExist(email))
     {
-        Console::printSpaced("Email Already Exists!");
-        return false;
-    }
-    else if (email.find('@') == string::npos)
-    {
-        Console::printSpaced("Email must include '@'");
-        return false;
-    }
+        if (emailAlreadyExist(email))
+        {
+            Console::printSpaced("Email Already Exists!");
+            return false;
+        }
+        else if (email.find('@') == string::npos)
+        {
+            Console::printSpaced("Email must include '@'");
+            return false;
+        }
 
-    return true;
-}
+        return true;
+    }
 
     static bool emailAlreadyExist(const string &email)
     {
@@ -110,31 +123,57 @@ public:
         return dataList.isEmailExiting(email);
     }
 
-    static int getPhoneNumber()
-    {
-        string phNoStr = Console::promptSpaced("Enter Phone Number: ");
-        int phoneNoInt;
+    static long long int getPhoneNumber()
+{
+    string phNoStr;
+    long long int phoneNoInt;
 
-        while (true)
+    while (true)
+    {
+        phNoStr = Console::promptSpaced("Enter Phone Number: ");
+
+        if (phNoStr.length() != 11)
+        {
+            cout << "Enter exactly 11 digits for the Phone Number: " << endl;
+            continue;
+        }
+
+        bool isValid = true;
+        for (char c : phNoStr)
+        {
+            if (!isdigit(c))
+            {
+                isValid = false;
+                break;
+            }
+        }
+
+        if (!isValid)
+        {
+            cout << "Invalid input. Please enter digits only: " << endl;
+        }
+        else
         {
             try
             {
-                phoneNoInt = stoi(phNoStr);
+                phoneNoInt = stoll(phNoStr);
                 break;
-            }
-            catch (const invalid_argument &e)
-            {
-                cerr << "Invalid, Enter Digits Only: " << e.what() << endl;
-                phNoStr = Console::promptSpaced("Enter Phone Number: ");
             }
             catch (const out_of_range &e)
             {
-                cerr << "Out of range error: " << e.what() << endl;
-                phNoStr = Console::promptSpaced("Enter Phone Number: ");
+                cout << "Out of range error. Please enter a smaller number: " << endl;
+            }
+            catch (const invalid_argument &e)
+            {
+                cout << "Invalid input. Please enter digits only: " << endl;
             }
         }
-        return phoneNoInt;
     }
+
+    return phoneNoInt;
+}
+
+
     static bool validatePassword(const string &password)
     {
 
