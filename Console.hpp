@@ -3,91 +3,85 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+
+using namespace std;
+
 class Console {
 public:
-    static void print(const std::string& message) {
-        std::cout << message << std::endl;
+    static void print(const string& message) {
+        cout << message << endl;
     }
 
-    static void printSpaced(const std::string& message) {
+    static void printSpaced(const string& message) {
         print(message + '\n');
     }
 
-    static std::string prompt(const std::string& prompt) {
-        std::cout << prompt << std::endl;
-        std::string answer;
-        std::getline(std::cin, answer);
+    static string prompt(const string& prompt) {
+        cout << prompt << endl;
+        string answer;
+        getline(cin, answer);
         return answer;
     }
 
-    static std::string promptSpaced(const std::string& prmpt) {
-        std::string answer = prompt(prmpt);
-        std::cout << std::endl;
+    static string promptSpaced(const string& prmpt) {
+        string answer = prompt(prmpt);
+        cout << endl;
         return answer;
     }
 
     static void printSpace() {
-        std::cout << std::endl;
+        cout << endl;
     }
 
-   static std::string promptWithChoices(const std::string& prompt, const std::vector<std::string>& choices) {
-    std::cout << prompt << std::endl;
-    return getValidAnswer(prompt, choices);
-}
+    static string promptWithChoices(const string& prompt, const vector<string>& choices) {
+        cout << prompt << endl;
+        return getValidAnswer(prompt, choices);
+    }
 
-static std::string promptWithChoicesSpaced(const std::string& prompt, const std::vector<std::string>& choices) {
-    std::string choice = promptWithChoices(prompt, choices);
-    std::cout << std::endl;
-    return choice;
-}
+    static string promptWithChoicesSpaced(const string& prompt, const vector<string>& choices) {
+        string choice = promptWithChoices(prompt, choices);
+        cout << endl;
+        return choice;
+    }
 
 private:
-static std::string getValidAnswer(const std::string& prompt, const std::vector<std::string>& choices) {
-    std::string chosenAnswer;
-    while (true) {
-        std::cout << formatAnswers(choices) << std::endl;
-        std::string userInput;
-        std::getline(std::cin, userInput);
+    static string getValidAnswer(const string& prompt, const vector<string>& choices) {
+        string chosenAnswer;
+        while (true) {
+            cout << formatAnswers(choices) << endl;
+            string userInput;
+            getline(cin, userInput);
 
-        // Check if user input is a number
-        if (std::all_of(userInput.begin(), userInput.end(), ::isdigit)) {
-            int choiceNum = std::stoi(userInput);
-            if (choiceNum >= 1 && choiceNum <= choices.size()) {
-                chosenAnswer = choices[choiceNum - 1];
+            // Check if user input is a number
+            if (all_of(userInput.begin(), userInput.end(), ::isdigit)) {
+                int choiceNum = stoi(userInput);
+                if (choiceNum >= 1 && choiceNum <= choices.size()) {
+                    chosenAnswer = choices[choiceNum - 1];
+                    break;
+                }
+            }
+
+            // Check if user input matches any of the choices
+            for (const auto& answer : choices) {
+                if (userInput == answer) {
+                    chosenAnswer = answer;
+                    break;
+                }
+            }
+
+            if (!chosenAnswer.empty()) {
                 break;
             }
-        }
 
-        // Check if user input matches any of the choices
-        for (const auto& answer : choices) {
-            if (userInput == answer) {
-                chosenAnswer = answer;
-                break;
-            }
+            cout << "\nIncorrect choice. Please enter the corresponding number or the choice text." << endl;
         }
-
-        if (!chosenAnswer.empty()) {
-            break;
-        }
-
-        std::cout << "\nIncorrect choice. Please enter the corresponding number or the choice text." << std::endl;
-    }
-    return chosenAnswer;
-}
-
-    static std::string parseAnswer(const std::string& input, const std::vector<std::string>& choices) {
-        for (const auto& answer : choices) {
-            if (input == answer) {
-                return answer;
-            }
-        }
-        return "";
+        return chosenAnswer;
     }
 
-    static std::string formatAnswers(const std::vector<std::string>& answers) {
-        std::string validAnswers;
+    static string formatAnswers(const vector<string>& answers) {
+        string validAnswers;
         for (size_t i = 0; i < answers.size(); ++i) {
-            validAnswers += std::to_string(i + 1) + ". " + answers[i];
+            validAnswers += to_string(i + 1) + ". " + answers[i];
             if (i != answers.size() - 1) {
                 validAnswers += '\n';
             }
@@ -95,4 +89,3 @@ static std::string getValidAnswer(const std::string& prompt, const std::vector<s
         return validAnswers;
     }
 };
-
