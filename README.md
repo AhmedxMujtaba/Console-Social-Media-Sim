@@ -24,20 +24,27 @@ Welcome to the Social Media Application! This application allows users to intera
 To run the application, follow these steps:
 
 1. Clone the repository to your local machine.
-2. Compile the source files using a C++ compiler (e.g., g++).
-3. Execute the compiled executable to launch the application.
-4. Follow the on-screen instructions to log in, sign up, and use the application features.
+2. Compile the source files using a C++ compiler
+3. ```g++ Main.cpp -o Main```
+4. ``` Run ./Main.exe ```
+5. Follow the on-screen instructions to log in, sign up, and use the application features.
 
 ## Developer
 
 - [Ahmed Mujtaba](https://github.com/AhmedxMujtaba)
+  
 
-## Class Diagram
+## System Diagram
 
-![Class-Diagram-v2](https://github.com/AhmedxMujtaba/Console-Social-Media-Sim/assets/121884030/8ff7efd5-f9c0-498c-b2a5-3fa64241f4cd)
+![System Diagram](https://github.com/AhmedxMujtaba/Console-Social-Media-Sim/assets/121884030/adbf89d9-e74a-45e7-9fb3-117ce09c58e3)
+
 
 ## Data Structure Representation
 
 ![Data Structure Diagram](https://github.com/AhmedxMujtaba/Console-Social-Media-Sim/assets/121884030/02ac8e15-7004-4b68-8c4b-14fe4915703f)
 
+
+## Class Diagram
+
+![Class-Diagram-v2](https://github.com/AhmedxMujtaba/Console-Social-Media-Sim/assets/121884030/8ff7efd5-f9c0-498c-b2a5-3fa64241f4cd)
 
